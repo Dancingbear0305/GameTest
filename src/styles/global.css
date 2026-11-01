@@ -8,7 +8,7 @@
 @media(min-width:1600px){.main-menu{padding-left:max(5vw,calc((100vw - 1450px)/2));padding-right:max(5vw,calc((100vw - 1450px)/2))}}@media(max-width:1050px){.session-label{display:none}.game-layout{grid-template-columns:minmax(0,1fr) 265px;gap:17px}.game-screen{padding:0 22px}.game-main .scene{height:340px}.dialogue{padding:23px}.game-footer>span:last-child{display:none}.resources{gap:18px}.menu-footer>span:nth-child(2){display:none}.menu-scene-note{right:7%}.menu-content h1{font-size:78px}}
 @media(max-width:760px){.main-menu{padding:25px 27px 0}.menu-content{padding-top:60px;padding-bottom:45px}.menu-content h1{font-size:66px}.menu-content>.eyebrow{font-size:.62rem}.menu-description{font-size:.68rem}.menu-nav{max-width:300px;margin-top:30px}.menu-scene-note{display:none}.scene-menu .door-frame{left:60%;width:32%;bottom:21%;height:60%;opacity:.65}.scene-menu:after{background:linear-gradient(90deg,#090c0af5 0%,#090c0ae0 33%,#090c0a70 74%,#090c0a50),linear-gradient(0deg,#090c0a,transparent 40%)}.menu-top .wordmark{font-size:.75rem}.menu-footer{font-size:.58rem;min-height:65px;gap:10px}.game-screen{padding:0 17px}.game-header{height:66px;gap:8px}.game-header .wordmark{font-size:.7rem;letter-spacing:.05em}.brand-symbol{font-size:21px;margin-right:8px}.game-header nav{gap:12px}.game-header nav button{font-size:.65rem}.game-header nav button:last-child span{display:none}.game-status{min-height:94px;gap:10px;align-items:flex-start;justify-content:center;flex-direction:column;padding:15px 0}.resources{gap:22px;flex-wrap:wrap;row-gap:7px}.resources span{font-size:.68rem}.resources b{margin-left:8px;font-size:.85rem}.day-label strong{font-size:1.3rem}.phase-label{font-size:.6rem;padding:3px 8px}.game-layout{grid-template-columns:1fr;gap:18px}.game-main .scene{height:295px;min-height:295px}.scene-coordinate{display:none}.dialogue{padding:20px}.dialogue-text{font-size:.92rem;min-height:115px}.game-sidebar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:12px;align-items:start}.npc-panel{grid-row:span 2}.panel-caption{padding:0 13px;font-size:.6rem}.npc-identity{padding:16px 12px 12px;gap:9px}.npc-avatar{width:30px;height:39px;font-size:14px}.npc-identity h2{font-size:.88rem}.npc-identity .tag{display:none}.npc-description{padding:0 12px 12px;font-size:.65rem}.npc-tabs{margin:0 12px;gap:9px}.npc-tabs button{padding:10px 7px;font-size:.7rem}.npc-actions{padding:8px 4px;min-height:85px}.npc-decision{padding:8px 4px}.choice-button{gap:8px;padding:10px 8px;font-size:.76rem}.choice-copy small{font-size:.6rem}.choice-arrow{font-size:12px}.record-panel h2{margin:16px 12px 12px;font-size:.75rem}.record-panel ul{padding:0 12px 13px}.record-panel li{font-size:.7rem}.empty-note{margin:0 12px 14px;font-size:.65rem}.inventory-label{margin:0 12px;font-size:.6rem}.record-panel>.compact{padding:0 12px 13px;font-size:.65rem}.debug-panel{font-size:.65rem;padding:12px}.debug-panel button{font-size:.65rem;padding:6px}.debug-panel dl{display:block}.debug-panel dd{margin-bottom:8px;font-size:.6rem}.game-footer{font-size:.57rem;gap:10px;min-height:60px;margin-top:20px}.game-footer>span:nth-child(2){display:none}.game-footer>span:last-child{display:block}.modal-head{padding:20px}.save-screen,.settings-screen,.credits,.confirm-panel{padding:20px}.slot-actions{max-width:75px}.save-slot{gap:10px;padding:13px 10px}.slot-index{min-width:25px;padding-right:8px;font-size:.65rem}.slot-info p{font-size:.6rem}.slot-info time{font-size:.56rem}.setting-row{gap:14px}.setting-row small{font-size:.65rem}.setting-row select{min-width:90px;padding:8px;font-size:.7rem}.scene-label{font-size:.62rem;left:20px}.subject-marker{right:20px}.scene-character .silhouette{width:40%;left:33%;height:80%}}
 @media(max-width:370px){.game-header nav{gap:8px}.wordmark-button .brand-symbol{display:none}.game-sidebar{grid-template-columns:1fr}.npc-panel{grid-row:auto}.build-label{font-size:.6rem}.main-menu{padding-inline:20px}.menu-content h1{font-size:58px}}
-/* Conversation follows the scene in normal flow, keeping long text readable. */
+/* Phones stack the conversation below the scene; desktops use two columns. */
 .dialogue-game .game-layout { display: block; }
 .dialogue-game .game-main { border: 0; background: #101710; }
 .dialogue-game .game-main .scene {
@@ -76,3 +76,29 @@
 .observation h2 { font-size: .9rem; font-weight: 400; color: #cfddbf; margin-bottom: 10px; }
 .observation p { color: #aabb9e; line-height: 2; white-space: pre-wrap; overflow-wrap: anywhere; }
 .text-large .observation p { font-size: 1.22rem; }
+
+@media (min-width: 761px) {
+  .dialogue-game .game-main {
+    display: grid;
+    grid-template-columns: minmax(0, 56fr) minmax(0, 44fr);
+    align-items: start;
+  }
+  .dialogue-game .game-main .scene {
+    height: clamp(480px, 73svh, 820px);
+    position: sticky;
+    top: 24px;
+  }
+  .dialogue-game .scene-character img {
+    width: 100%;
+    max-width: 100%;
+    height: 96%;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+  .dialogue-game .dialogue {
+    min-width: 0;
+    padding: clamp(28px, 4vw, 60px) clamp(24px, 3vw, 48px) 36px;
+    overflow-wrap: anywhere;
+    background: linear-gradient(110deg, #101710, #0c110d);
+  }
+}
