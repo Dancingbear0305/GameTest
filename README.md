@@ -42,7 +42,7 @@ npm run preview
 - 焦點不在控制項時，1–9 選擇一般分支（不含分頁內操作）；Space / Enter 完成逐字文字；Esc 回主選單。
 - 存檔與設定使用原生 `dialog`，支援焦點限制、Esc 關閉與焦點恢復。
 - 設定可關閉掃描線、顆粒、暗角與背景動態，調整文字大小及速度。遵循系統 `prefers-reduced-motion`。
-- 無正式美術、音樂、音效，未使用參考作品素材。
+- 第一位角色已接上專案作者提供的圖片；其餘場景仍為 CSS 佔位，無音樂或音效。
 
 ## 存檔
 
@@ -129,7 +129,7 @@ tests/engine.test.ts
 
 ### 圖片
 
-JSON 的 `background`、`character`、NPC `image` 使用相對 `public/` 的路徑，如 `characters/first.webp`，不要加開頭 `/`；`assetUrl()` 會套用 Vite base。背景、角色與效果各自分層，沒有圖片時使用 CSS 佔位畫面。
+JSON 的 `background`、`character`、NPC `image` 使用相對 `public/` 的路徑，如 `characters/first.webp`，不要加開頭 `/`；`assetUrl()` 會套用 Vite base。背景、角色與效果各自分層，沒有圖片時使用 CSS 佔位畫面。目前第一位角色圖片為 `public/characters/first.png`，保留原始內容並等比例顯示，夜晚及白天對話共用此圖片；開槍移除角色後不再顯示。
 
 ## GitHub Pages
 

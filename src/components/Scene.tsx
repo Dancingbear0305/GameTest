@@ -9,6 +9,6 @@ export function Scene({ node, npc, menu = false }: { node?: StoryNode; npc?: Npc
     <div className="scene-character">{character ? <img src={character} alt={npc?.name ?? '角色佔位圖'} /> : npc && <div className="silhouette"><div className="silhouette-head" /><div className="silhouette-body" /></div>}</div>
     <div className="scene-atmosphere" />
     {!menu && <><span className="scene-label">{node?.id.startsWith('night-') ? '門外' : '屋內'} <span>／</span> 測試場景</span><span className="scene-coordinate">背景・角色・效果分層</span><span className="crosshair crosshair-tl" /><span className="crosshair crosshair-br" /></>}
-    {npc && <div className="subject-marker"><span className="status-dot" /><span>{npc.designation}</span><small>角色圖像佔位</small></div>}
+    {npc && <div className="subject-marker"><span className="status-dot" /><span>{npc.designation}</span><small>{character ? '角色圖片' : '角色圖像佔位'}</small></div>}
   </div>;
 }

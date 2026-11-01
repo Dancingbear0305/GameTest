@@ -65,7 +65,8 @@
           "label": "手部",
           "text": "手部的固定測試特徵 C。此處由你填入正式描述。"
         }
-      ]
+      ],
+      "image": "characters/first.png"
     }
   ],
   "nodes": [
