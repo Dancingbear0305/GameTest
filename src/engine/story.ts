@@ -22,8 +22,9 @@ export function applyEffects(state: GameState, effects: Effect[], data: StoryDat
         break;
       }
       case 'flag': result.flags = unique(result.flags, effect.key, !effect.value); break;
-      case 'item': result.inventory = unique(result.inventory, effect.key, effect.remove); break;
-      case 'clue': result.clues = unique(result.clues, effect.key, effect.remove); break;
+      case 'observe':
+        if (!data.npcs.find(n => n.id === effect.npcId)?.features.some(f => f.id === effect.featureId)) throw new Error('調查部位不存在。');
+        result.lastObservation = { npcId: effect.npcId, featureId: effect.featureId }; break;
       case 'npc': result.npcStates[effect.npcId] = { ...result.npcStates[effect.npcId], [effect.key]: effect.value }; break;
       case 'event': {
         const event = requireNode(data, effect.eventId);
@@ -62,7 +63,7 @@ export function enterNode(state: GameState, id: string, data: StoryData): GameSt
 }
 export function createGame(data: StoryData): GameState {
   return enterNode({ currentNodeId: data.config.initialNodeId, currentPhase: data.config.initialPhase, day: 1,
-    playerStats: { ...data.config.initialStats }, resources: { ...data.config.initialResources }, inventory: [], clues: [], flags: [],
+    resources: { ...data.config.initialResources }, flags: [], lastObservation: null,
     npcStates: {}, decisionHistory: [], visitedNodes: [], endingId: null }, data.config.initialNodeId, data);
 }
 export function availableChoices(state: GameState, data: StoryData): Choice[] {
@@ -70,8 +71,7 @@ export function availableChoices(state: GameState, data: StoryData): Choice[] {
   if (node.type === 'ending') return [];
   if (node.choices) return node.choices;
   if (node.next) return [{ id: 'continue', label: '繼續', next: node.next }];
-  const npc = data.npcs.find(n => n.id === node.npcId);
-  return npc ? [...npc.questions, ...npc.investigations, ...npc.interactions, npc.decision] : [];
+  return [];
 }
 export function choose(state: GameState, choiceId: string, data: StoryData): GameState {
   const choice = availableChoices(state, data).find(c => c.id === choiceId);
@@ -79,7 +79,14 @@ export function choose(state: GameState, choiceId: string, data: StoryData): Gam
   let result = applyEffects(state, choice.effects ?? [], data);
   result.decisionHistory.push({ nodeId: state.currentNodeId, choiceId, day: state.day });
   if (choice.next) result = enterNode(result, choice.next, data);
-  return result;
+  // Resolve configured phase transitions in the same transaction as the choice.
+  for (let hops = 0; hops < 32; hops++) {
+    if (result.endingId) return result;
+    const transition = data.config.transitions.find(t => checkCondition(t.conditions, result));
+    if (!transition) return result;
+    result = enterNode(result, transition.next, data);
+  }
+  throw new Error('階段跳轉超過安全上限。');
 }
 export function validateStory(data: StoryData): string[] {
   const errors: string[] = [];
@@ -88,6 +95,8 @@ export function validateStory(data: StoryData): string[] {
   const ref = (id: string | undefined) => { if (id && !ids.has(id)) errors.push(`節點不存在：${id}`); };
   const effects = (list: Effect[] = []) => list.forEach(e => {
     if (e.type === 'event') { ref(e.eventId); if (data.nodes.find(n => n.id === e.eventId)?.type !== 'event') errors.push(`事件類型錯誤：${e.eventId}`); }
+    if ((e.type === 'npc' || e.type === 'observe') && !data.npcs.some(n => n.id === e.npcId)) errors.push(`NPC 不存在：${e.npcId}`);
+    if (e.type === 'observe' && !data.npcs.find(n => n.id === e.npcId)?.features.some(f => f.id === e.featureId)) errors.push(`調查部位不存在：${e.featureId}`);
     if (e.type === 'phase' && !data.config.phases.some(p => p.id === e.phase)) errors.push(`階段不存在：${e.phase}`);
   });
   const choices = (list: Choice[] = []) => {
@@ -105,6 +114,7 @@ export function validateStory(data: StoryData): string[] {
     if (n.npcId && !data.npcs.some(npc => npc.id === n.npcId)) errors.push(`NPC 不存在：${n.npcId}`);
     ref(n.next); effects(n.effects); choices(n.choices);
   });
-  data.npcs.forEach(n => choices([...n.questions, ...n.investigations, ...n.interactions, n.decision]));
+  data.config.transitions.forEach(t => ref(t.next));
+  data.npcs.forEach(n => { if (new Set(n.features.map(f => f.id)).size !== n.features.length) errors.push(`調查部位 ID 重複：${n.id}`); });
   return errors;
 }

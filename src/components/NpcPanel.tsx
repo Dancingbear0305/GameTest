@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import type { GameState, NpcData } from '../types/game';
+import type { Choice, GameState } from '../types/game';
 import { ChoiceButton } from './ChoiceButton';
-const tabs = [{ id: 'questions', label: '對話' }, { id: 'investigations', label: '調查' }, { id: 'interactions', label: '互動' }] as const;
-export function NpcPanel({ npc, state, onChoose, active }: { npc: NpcData; state: GameState; onChoose: (id: string) => void; active: boolean }) {
-  const [tab, setTab] = useState<typeof tabs[number]['id']>('questions');
-  return <section className="npc-panel" aria-labelledby="npc-title">
-    <div className="panel-caption"><span>互動對象</span><span className="status-dot" /></div>
-    <div className="npc-identity"><div className="npc-avatar" aria-hidden="true">◉</div><div><span className="eyebrow">{npc.designation}</span><h2 id="npc-title">{npc.name}</h2></div><span className="tag">佔位</span></div>
-    <p className="npc-description">{npc.description}</p>
-    <div className="npc-tabs" role="tablist" aria-label="NPC 操作分類">{tabs.map(t => <button key={t.id} role="tab" id={`tab-${t.id}`} aria-selected={tab === t.id} aria-controls="npc-actions" tabIndex={tab === t.id ? 0 : -1} onKeyDown={e => {
-      const current = tabs.findIndex(item => item.id === t.id);
-      const next = e.key === 'ArrowRight' ? (current + 1) % tabs.length : e.key === 'ArrowLeft' ? (current + tabs.length - 1) % tabs.length : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+const categories = [{ id: 'dialogue', label: '對話' }, { id: 'interaction', label: '互動' }] as const;
+export function NpcPanel({ choices, state, onChoose }: { choices: Choice[]; state: GameState; onChoose: (id: string) => void }) {
+  const tabs = categories.filter(t => choices.some(c => c.category === t.id));
+  const [selected, setSelected] = useState<string>('dialogue');
+  const current = tabs.find(t => t.id === selected) ?? tabs[0];
+  return <section className="npc-panel" aria-label="角色操作">
+    {current && <><div className="npc-tabs" role="tablist" aria-label="角色操作分類">{tabs.map((t, index) => <button key={t.id} role="tab" id={`tab-${t.id}`} aria-selected={current.id === t.id} aria-controls="npc-actions" tabIndex={current.id === t.id ? 0 : -1} onKeyDown={e => {
+      const next = e.key === 'ArrowRight' ? (index + 1) % tabs.length : e.key === 'ArrowLeft' ? (index + tabs.length - 1) % tabs.length : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
       if (next < 0) return;
-      e.preventDefault(); setTab(tabs[next].id); document.getElementById(`tab-${tabs[next].id}`)?.focus();
-    }} onClick={() => setTab(t.id)}>{t.label}</button>)}</div>
-    <div id="npc-actions" role="tabpanel" aria-labelledby={`tab-${tab}`} className="npc-actions">{active ? npc[tab].map(c => <ChoiceButton key={c.id} choice={c} state={state} onChoose={onChoose} />) : <p className="muted compact">請先完成目前的對話或選擇。</p>}</div>
-    <div className="npc-decision">{active ? <ChoiceButton choice={npc.decision} state={state} onChoose={onChoose} /> : <span className="muted compact">互動暫停中</span>}</div>
+      e.preventDefault(); setSelected(tabs[next].id); document.getElementById(`tab-${tabs[next].id}`)?.focus();
+    }} onClick={() => setSelected(t.id)}>{t.label}</button>)}</div>
+    <div id="npc-actions" role="tabpanel" aria-labelledby={`tab-${current.id}`} className="npc-actions">{choices.filter(c => c.category === current.id).map(c => <ChoiceButton key={c.id} choice={c} state={state} onChoose={onChoose} />)}</div></>}
+    <div className="npc-decision">{choices.filter(c => c.category === 'decision').map(c => <ChoiceButton key={c.id} choice={c} state={state} onChoose={onChoose} />)}</div>
   </section>;
 }

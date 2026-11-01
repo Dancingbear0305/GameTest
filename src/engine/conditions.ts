@@ -7,8 +7,8 @@ export function checkCondition(condition: Condition | undefined, state: GameStat
     case 'or': return condition.conditions.some(c => checkCondition(c, state));
     case 'not': return !checkCondition(condition.condition, state);
     case 'flag': return state.flags.includes(condition.key);
-    case 'item': return state.inventory.includes(condition.key);
-    case 'clue': return state.clues.includes(condition.key);
+    case 'phase': return state.currentPhase === condition.value;
+    case 'npc': return state.npcStates[condition.npcId]?.[condition.key] === condition.value;
     default: {
       const value = state[condition.group][condition.key];
       if (value === undefined) return false;

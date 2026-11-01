@@ -1,192 +1,156 @@
-# 未命名計畫 · 網頁文字互動遊戲框架
+# 未命名計畫 · 第一位角色日夜流程
 
-React + TypeScript strict + Vite。第一階段以 **可操作的 UI 與中立測試流程** 為交付範圍，沒有正式劇情、人物設定或世界觀，沒有後端、帳號、付費 API 或即時生成內容。
+React + TypeScript strict + Vite 的單人文字互動框架。沒有後端、資料庫、帳號或付費 API。本階段只做一位角色，從第一天夜晚開始，到第一次白天結束、進入下一個夜晚為止。
 
-## 本機啟動
+**劇情、正式台詞、角色設定與特徵描述由專案作者填寫。** 現有文字與剪影僅為中立測試資料，不隨機生成角色特徵，也不揭露角色身分。
 
-建議 Node.js 24（CI 使用同版本），npm 11。
+## 啟動、測試與建置
+
+建議 Node.js 24、npm 11：
 
 ```sh
 npm ci
 npm run dev
+npm test
+npm run build
+npm run preview
 ```
 
-終端機會顯示開發伺服器位址。其他命令：
+`dev` 與 `preview` 顯示的本機位址可供瀏覽器測試；雲端沙箱如限制監聽埠或下載套件，請使用環境提供的權限流程。`npm run test:watch` 可持續執行測試。
 
-```sh
-npm test            # 核心單元測試
-npm run test:watch  # 開發時持續測試
-npm run build      # TypeScript strict 檢查 + 正式建置到 dist/
-npm run preview    # 檢查正式建置
-```
+## 遊戲流程
 
-開發伺服器預設監聽所有介面；需要僅限本機時使用 `npm run dev -- --host 127.0.0.1`。雲端執行環境如有沙箱網路限制，啟動監聽埠與下載套件需要使用該環境支援的權限流程。
+| 階段 | 可以執行的操作 | 行動規則 |
+| --- | --- | --- |
+| 第一天夜晚・門外 | 對話、放進來、趕走 | 無調查或開槍；夜晚行動顯示 0，僅於白天可用 |
+| 第一天白天・屋內 | 自主選擇已放進來的角色 | 白天開始取得 3 次行動 |
+| 白天・對話 | 反覆交談、返回屋內 | 不扣行動 |
+| 白天・互動 | 調查頭部、眼睛、手部 | 每個部位 1 次行動；已調查的部位停用，不重複收費 |
+| 白天・互動 | 對角色開槍 | 先確認，可取消；暫定不扣行動，確認後角色消失，不提供身分判定 |
+| 行動耗盡 | 自動結束白天 | 第三次調查直接進入下一個夜晚，仍顯示最後一次觀察 |
+| 屋內無人 | 結束白天 | 趕走或開槍後提供此選項，避免無人可互動時卡住 |
 
-## 目前可以測試什麼
+放進來與趕走都會立即結束第一個夜晚、進入白天。第一天白天結束後天數變為 2、階段為夜晚，顯示測試結束畫面；**不會開始第二位來訪者或額外劇情**。
 
-1. 主選單 →「開始新遊戲」，顯示測試 NPC 與分層場景。
-2. 在「對話」詢問問題、逐句對話，再返回。
-3. 切到「調查」：「查詢測試紀錄」最初停用；「檢查測試項目」消耗 1 次行動、設定 `inspected` 旗標並取得測試線索。
-4. 按「繼續」返回後，紀錄解鎖，重複調查停用。
-5. 「互動」可消耗 1 個工具取得測試文件。
-6. 「進行最終判斷」：通過 → 結局 A；根據線索 → 結局 B（調查後才顯示）；不通過 → 結局 C。
-7. 使用右上「存檔 / 讀檔」儲存三個手動欄位；重新整理回主選單後「繼續遊戲」載入自動存檔。
-8. 「系統測試工具」能切換階段、觸發階段事件、開始新一天並重置每日行動。
-9. 設定可關閉全部螢幕特效、調整對話與選項文字大小、改變逐字速度。遵循 `prefers-reduced-motion`，不使用閃爍效果。
+專注度、工具、物品、線索清單、調查筆記與手動推進階段的測試面板均已移除。介面只保留行動次數、「對話」與「互動」，並提供當前流程需要的選擇。
 
-新遊戲會取代**自動存檔**，已有進度時需確認；不會覆蓋手動欄位。覆蓋手動存檔與刪除都需確認。資料只保留在目前瀏覽器與網域；清除網站資料會清除進度。GitHub Pages 同一網域不同子目錄的應用共享 localStorage，目前使用 `text-adventure:` 前綴；若同網域部署多款遊戲，請先替換前綴避免互相覆蓋。
+## 操作與介面
 
-## 操作與無障礙
+- 上方顯示場景，下方為全寬對話與選項。手機縮短場景高度、放大閱讀與操作空間；長文字自然向下延伸。
+- Tab / Shift+Tab 移動焦點；Enter / Space 啟動按鈕。
+- 「對話／互動」分頁支援左右方向鍵、Home、End。夜晚僅有對話分頁。
+- 焦點不在控制項時，1–9 選擇一般分支（不含分頁內操作）；Space / Enter 完成逐字文字；Esc 回主選單。
+- 存檔與設定使用原生 `dialog`，支援焦點限制、Esc 關閉與焦點恢復。
+- 設定可關閉掃描線、顆粒、暗角與背景動態，調整文字大小及速度。遵循系統 `prefers-reduced-motion`。
+- 無正式美術、音樂、音效，未使用參考作品素材。
 
-- Tab / Shift+Tab 切換焦點，Enter / Space 啟動按鈕。
-- NPC 分頁支援方向鍵、Home、End；Tab 進入目前分頁。
-- 焦點不在控制項時，1–9 選擇目前劇情分支；Space / Enter 完成逐字文字；Esc 回主選單。
-- 對話框使用原生 `dialog`，限制焦點於面板內，Esc 關閉並恢復原焦點。
-- 所有動畫皆能關閉，系統減少動態偏好也會停用動畫與逐字效果。
-- 對話、提問、調查與判斷直接浮現在場景內，角色靠左、選項靠右；調查筆記預設收合在場景下方。手機保留場景內互動，支援直向捲動。
+## 存檔
 
-## 目錄
+自動存檔與三格手動存檔，皆儲存完整狀態及時間。讀檔不重跑節點進入效果，因此不會重複扣行動、重置日間行動或重複開槍。重新整理後從主選單「繼續遊戲」恢復。
+
+- 存檔格式：`{ version: 2, savedAt: ISO時間, state: GameState }`。
+- 新遊戲僅取代自動存檔；已有進度時確認。手動欄位的覆蓋與刪除各自需要確認。
+- 舊版 UI 測試的 v0/v1 存檔不適用目前規則，不自動遷移或刪除；畫面會提示開始新遊戲。要重用舊手動欄位，可先在面板刪除該欄位再儲存。
+- 驗證節點、階段、資料型別、非負整數行動、NPC 與觀察部位參照、節點進入條件及結局一致性。容量不足、瀏覽器存取拒絕、無效 JSON 均回報錯誤並保留原資料。
+- 只儲存在目前瀏覽器與網域，清除網站資料會清除進度，沒有跨裝置同步。同一網域的不同子目錄共享 localStorage；部署多款遊戲時應改用不同的 `text-adventure:` 前綴。
+
+## 專案結構
 
 ```text
-.github/workflows/deploy.yml  GitHub Pages 建置與部署
 src/
-  assets/                    素材使用說明（目前為純 CSS）
-  components/                Scene、NpcPanel、ChoiceButton、Modal
-  context/GameContext.tsx    Context + useReducer、錯誤回報、自動存檔
-  data/story.json            節點、NPC、階段、數值、資源與中文標籤
-  data/index.ts              資料載入與格式錯誤的安全備援畫面
-  engine/
-    conditions.ts            統一條件判斷
-    story.ts                 效果、跳轉、選項、圖形參照驗證
-    validateData.ts          外部 JSON 結構驗證
-  hooks/                     設定持久化、逐字顯示
-  screens/                   主選單、遊戲、存讀檔、設定
-  styles/global.css          響應式介面、分層場景、可關閉特效
-  systems/                   存檔與時間系統
-  types/game.ts              所有劇情與遊戲狀態型別
-  utils/assets.ts            子目錄部署的素材路徑處理
-  App.tsx                    畫面與系統面板切換
-  main.tsx                   入口
-tests/engine.test.ts         核心系統測試
+  components/     場景、角色操作分類、選項按鈕、對話框
+  screens/        主選單、遊戲、存讀檔、設定
+  engine/         條件判斷、效果、節點跳轉、資料驗證
+  systems/        存檔、跨日狀態
+  context/        Context + useReducer、自動存檔
+  data/story.json 角色、固定特徵、選項、分支、階段與自動轉換
+  types/game.ts   JSON 與 GameState 型別
+  hooks/          逐字效果與設定
+  styles/         響應式介面與特效
+  assets/         素材使用說明
+  utils/          靜態素材 base 路徑
+tests/engine.test.ts
+.github/workflows/deploy.yml
 ```
 
-NPC 與調查不另設複雜框架：資料定義於 JSON，操作與劇情選項共用 `Choice`、條件與效果引擎，避免 UI 重複寫遊戲規則。
+`GameState` 保留 `currentNodeId`、`currentPhase`、`day`、`resources.actions`、內部 `flags`、`npcStates`、`lastObservation`、`decisionHistory`、`visitedNodes`、`endingId`。不再保存專注度、工具、物品或線索清單。旗標僅供分支判斷；`lastObservation` 僅記住最近觀察的角色與部位 ID，實際特徵文字來自固定 JSON。
 
-## 加入 NPC
+## 如何填寫劇情與固定特徵
 
-在 `src/data/story.json` 的 `npcs` 陣列新增唯一 `id`，填入 `name`、`designation`、`description`、可選 `image`，以及 `questions`、`investigations`、`interactions` 和 `decision`。前三者為選項陣列，`decision` 為一個選項。範例：
+編輯 `src/data/story.json`，不需要更動 React 元件：
 
-```json
-{
-  "id": "test-npc-2",
-  "name": "測試 NPC 2",
-  "designation": "NPC－002",
-  "description": "中立測試對象。",
-  "questions": [{ "id": "ask-2", "label": "詢問測試問題", "next": "test-answer-2" }],
-  "investigations": [],
-  "interactions": [],
-  "decision": { "id": "judge-2", "label": "進行測試判斷", "next": "decision" }
-}
-```
-
-同時建立 `test-answer-2` 節點；在 NPC 的入口節點填入 `npcId: "test-npc-2"`。入口不設 `choices` 或 `next` 時，NPC 操作面板自動啟用；對話過程則由目前節點的選項控制，防止同時執行其他調查。各 NPC 的操作 ID 必須在該 NPC 內唯一。
-
-## 加入劇情節點
-
-`nodes` 是平坦陣列，`id` 必須全域唯一。支援 `narration`、`dialogue`、`choice`、`investigation`、`decision`、`event`、`ending`。
-
-```json
-{
-  "id": "test-answer-2",
-  "type": "dialogue",
-  "speaker": "測試 NPC 2",
-  "npcId": "test-npc-2",
-  "text": "這是中立測試回應。",
-  "choices": [
-    {
-      "id": "return",
-      "label": "返回測試入口",
-      "next": "start",
-      "effects": [{ "type": "flag", "key": "asked-2", "value": true }]
-    }
-  ]
-}
-```
-
-- `id`、`type`、`text` 必填，其餘 `speaker`、`background`、`character`、`npcId`、`choices`、`conditions`、`effects`、`next`、`tags` 選填。
-- 一般節點的 `next` 產生「繼續」按鈕；只有 `event` 的 `next` 自動跳轉。`choices` 優先於 `next`。
-- `effects` 在每次進入節點時執行；一次性行為應搭配旗標與停用條件，避免重新進入時重複取得資源。
-- `ending` 設定 `endingId`，顯示結束操作，不再提供一般選項。
-- `conditions` 控制節點進入資格，或選項是否顯示；`enabledWhen` 控制選項是否可按，`lockedReason` 為鎖定說明。
-- 無效的節點、條件或資源消耗會保留操作前狀態並顯示錯誤。自動跳轉和遞迴事件各有 32 層上限。
-- 外部 JSON 先驗證形狀與可用運算，再驗證節點參照、NPC 和 ID；格式缺漏時顯示安全備援畫面。
-
-### 條件
-
-```json
-{
-  "op": "and",
-  "conditions": [
-    { "op": "flag", "key": "inspected" },
-    { "op": "gte", "group": "resources", "key": "actions", "value": 1 },
-    { "op": "not", "condition": { "op": "item", "key": "used-item" } }
-  ]
-}
-```
-
-數值運算：`eq`、`ne`、`gt`、`lt`、`gte`、`lte`；組合：`and`、`or`、`not`；持有狀態：`flag`、`item`、`clue`。`or` 也使用 `conditions` 陣列。未知數值欄位的比較為不成立，不假設為 0。
-
-### 效果
-
-| type | 用途與欄位 |
+| 位置 | 用途 |
 | --- | --- |
-| `add` / `set` | `group: playerStats / resources`、`key`、`value`；負的 add 消耗資源，資源不能小於 0 |
-| `flag` | `key`、`value: true / false`，設定或移除旗標 |
-| `item` / `clue` | `key`，可加 `remove: true`；重複取得不重複儲存 |
-| `npc` | `npcId`、`key`、`value`，更新 NPC 狀態 |
-| `event` | `eventId`，若該事件的條件成立，執行其效果；不使用該事件的 next 跳轉 |
-| `phase` | `phase`，切換到配置階段並執行它的 `eventId` 效果 |
-| `newDay` | 天數 +1、回到初始階段、按 `dailyResources` 重置每日資源，再執行初始階段事件 |
+| `npcs[0]` | 第一個角色的名稱、簡介、圖片 |
+| `npcs[0].features` | 每個部位唯一 `id`、顯示 `label`、固定 `text` |
+| `night-answer.text` | 夜晚對話 |
+| `day-answer.text` | 白天對話 |
+| 節點的 `choices` | 按選擇導向不同節點、設定旗標或角色狀態 |
+| `config.phases` | 夜晚、白天及白天開始時的行動重置事件 |
+| `config.transitions` | 白天行動為 0 時，自動進入結束節點 |
 
-階段與初始數值都在 `config`。`playerStats` 和 `resources` 是可擴充鍵值表，UI 依標籤設定顯示。跨日保留旗標、線索、物品與 NPC 狀態；若未來需要每日清理其他狀態，應在時間系統增加明確的可配置規則。
+不存「隨機特徵」或自動分配真偽；開槍結果不揭露身分。之後可由作者使用固定劇情與旗標安排不同後果。
 
-### 素材
+### 新增對話分支
 
-JSON 中的 `background`、`character` 與 NPC `image` 使用相對 `public/` 路徑，例如 `characters/test.webp`，不加開頭 `/`。`assetUrl()` 套用 Vite base；亦可使用 Vite import 將素材放在 `src/assets/`。目前沒有正式圖片、音樂或音效；所有佔位場景均為 CSS。
+在 `nodes` 新增節點，例如：
 
-## 存檔格式與相容性
+```json
+{
+  "id": "day-answer-2",
+  "type": "dialogue",
+  "speaker": "測試角色",
+  "npcId": "first",
+  "text": "［由作者填寫的對話。］",
+  "conditions": { "op": "phase", "value": "day" },
+  "choices": [
+    { "id": "reply-a", "label": "測試回答 A", "next": "day-person", "effects": [{ "type": "flag", "key": "reply-a", "value": true }] },
+    { "id": "reply-b", "label": "測試回答 B", "next": "day-person" }
+  ]
+}
+```
 
-儲存 `{ version: 1, savedAt: ISO時間, state: 完整GameState }`。目前另支援已知 v0 格式的 `timestamp` → `savedAt` 遷移；未知版本不自動轉換。驗證狀態型別、階段與節點存在性、結局一致性、有限數值與非負資源。JSON 解析、容量與存取錯誤均顯示提示，不會自行刪除損壞資料。若未來刪除已使用的節點 ID，需要增加遷移策略。
+再將既有選項的 `next` 指向此 ID。節點 `id` 必須全域唯一，選項 ID 在同一節點內唯一。`id`、`type`、`text` 必填；其他欄位見 `types/game.ts`。
 
-## GitHub Pages 部署
+- `category: "dialogue"` 置於對話；`"interaction"` 置於互動；`"decision"` 為分類下方一直可見的流程決定。未設定分類的選項直接顯示。
+- 節點種類：`narration`、`dialogue`、`choice`、`investigation`、`decision`、`event`、`ending`。
+- 一般節點的 `next` 產生「繼續」；`event.next` 自動執行，`choices` 優先。
+- `conditions` 控制選項顯示與節點進入；`enabledWhen` 控制是否可按，`lockedReason` 提供說明。
+- 複合條件：`and` / `or` 搭配 `conditions` 陣列、`not` 搭配 `condition`。
+- 數值條件：`eq`、`ne`、`gt`、`lt`、`gte`、`lte`，`group` 為 `resources`。
+- 狀態條件：`flag` + `key`；`phase` + `value`；`npc` + `npcId` / `key` / `value`。
+- 效果：`add` / `set` 更新行動資源、`flag` 設定或移除旗標、`npc` 更新角色狀態、`observe` 記錄觀察部位、`phase` 切換階段、`newDay` 跨日、`event` 執行指定事件效果。
+- `event` 效果會檢查事件條件，只執行其 `effects`，不沿用 `next`。
+- 每次選擇先執行效果與目標節點，再檢查自動轉換；整筆成功才更新狀態。自動節點、遞迴事件、自動階段轉換都有上限，錯誤時保留原狀態。
 
-1. 將此專案推送至 GitHub 的 `main` 分支。
-2. Repository → Settings → Pages → Build and deployment → Source 選擇 **GitHub Actions**。
-3. `.github/workflows/deploy.yml` 在推送 `main` 或手動執行時，以 `npm ci` 安裝、執行測試及正式建置，再部署 `dist`。
-4. Workflow 以 `${{ github.event.repository.name }}` 自動產生 `VITE_BASE_PATH`，沒有寫死帳號或專案名稱。
-5. 帳號首頁儲存庫（`帳號.github.io`）或自訂網域部署於 `/` 時，將 workflow 的 `VITE_BASE_PATH` 改成 `/`；其他非 `main` 分支需調整觸發分支。
+### 後續新增角色
 
-手動建置到子目錄：
+本階段只有 `first`。日後新增角色時：在 `npcs` 增加唯一 ID 與固定 `features`；在屋內節點新增「選擇角色」選項，並以 `npc` 條件確認其 `presence` 為 `inside`。為新角色建立對話、調查與開槍分支，不要重用第一位角色的狀態 ID。共用 UI 會依節點 `npcId` 顯示對應角色。
+
+### 圖片
+
+JSON 的 `background`、`character`、NPC `image` 使用相對 `public/` 的路徑，如 `characters/first.webp`，不要加開頭 `/`；`assetUrl()` 會套用 Vite base。背景、角色與效果各自分層，沒有圖片時使用 CSS 佔位畫面。
+
+## GitHub Pages
+
+1. 推送到 `main`。
+2. Repository → Settings → Pages → Source 選 **GitHub Actions**。
+3. `.github/workflows/deploy.yml` 執行 `npm ci`、單元測試、正式建置、部署 `dist`。也可手動 Run workflow。
+4. Workflow 從 repository 名稱自動產生 `VITE_BASE_PATH`，不寫死帳號或專案名稱。
+5. 若部署帳號首頁或自訂網域根目錄，將 workflow 的 `VITE_BASE_PATH` 改為 `/`；非 `main` 請自行調整觸發分支。
+
+手動指定子目錄：
 
 ```sh
 VITE_BASE_PATH=/your-repository/ npm run build
 ```
 
-未設定時預設 `./` 相對資源。應用不使用路徑路由，各遊戲畫面都在同一個 `index.html` 內切換，因此重新整理 `/your-repository/` 不需要伺服器 rewrite，也不會因劇情頁面路徑出現 404。資產會套用同一 base。請不要把 `src` 或 `node_modules` 當部署成品。
+預設 base 為 `./`。不使用路徑路由，所有畫面都在單一入口切換，重新整理不需要伺服器 rewrite。設定好 Pages 後，推送才會透過 workflow 更新網站；本次本機修改不等於已發布。
 
-**此工作階段只建立部署流程，沒有推送或實際發布 GitHub Pages。**
+## 驗證與範圍
 
-## 驗證範圍與後續階段
+單元測試涵蓋：比較與複合條件、第一晚不能調查、接納／拒絕轉白天、免費對話、固定部位、三次行動結束白天、開槍確認／取消／移除、空屋出口、循環與壞資料防護、存檔往返、版本拒絕與儲存失敗。
 
-已加入核心單元測試：六種比較、複合條件、效果交易、資源不足、時間重置、事件循環防護、無效節點、三種分支、完整存檔、版本遷移、損壞資料與儲存失敗。
+Chromium 已實測：夜晚／白天／結束流程、兩種接待決定、開槍與取消、調查中存讀檔、重新整理、不重複扣行動、最後觀察顯示，以及桌面／390px／320px 的下方對話區。瀏覽器腳本為環境內臨時驗證，不新增專案依賴。
 
-另以 Chromium 實測開發版及 `/GameTest/` 子目錄正式建置（包含重新整理與 NPC 方向鍵分頁）：主選單、新遊戲、調查解鎖、手動儲存、重新整理繼續、結局 B、讀檔、設定持久化與 390px 手機排版；瀏覽器檢查腳本為本次環境的臨時驗證，未增加專案開發依賴。
-
-後續尚未完成（不影響本階段 UI 測試）：
-
-- 正式劇情、人物、世界觀、正式美術、音效與音樂，皆刻意留白。
-- 較完整的調查筆記詳情、對話回顧與章節管理。
-- 每日旗標／NPC 狀態清理等更進階的時間規則。
-- 實際 GitHub Pages 發布與線上驗收。
-- Safari、Firefox、實體手機、螢幕閱讀器與完整無障礙稽核尚未實測。
-- 存檔匯出／匯入、跨裝置同步、任意版本遷移不在本階段範圍。
+尚未實作：正式劇情與美術音效、第二個夜晚的可玩流程、第二位角色、跨裝置存檔、完整舊版遷移。尚未實測 Safari、Firefox、實體手機與螢幕閱讀器。

@@ -8,6 +8,71 @@
 @media(min-width:1600px){.main-menu{padding-left:max(5vw,calc((100vw - 1450px)/2));padding-right:max(5vw,calc((100vw - 1450px)/2))}}@media(max-width:1050px){.session-label{display:none}.game-layout{grid-template-columns:minmax(0,1fr) 265px;gap:17px}.game-screen{padding:0 22px}.game-main .scene{height:340px}.dialogue{padding:23px}.game-footer>span:last-child{display:none}.resources{gap:18px}.menu-footer>span:nth-child(2){display:none}.menu-scene-note{right:7%}.menu-content h1{font-size:78px}}
 @media(max-width:760px){.main-menu{padding:25px 27px 0}.menu-content{padding-top:60px;padding-bottom:45px}.menu-content h1{font-size:66px}.menu-content>.eyebrow{font-size:.62rem}.menu-description{font-size:.68rem}.menu-nav{max-width:300px;margin-top:30px}.menu-scene-note{display:none}.scene-menu .door-frame{left:60%;width:32%;bottom:21%;height:60%;opacity:.65}.scene-menu:after{background:linear-gradient(90deg,#090c0af5 0%,#090c0ae0 33%,#090c0a70 74%,#090c0a50),linear-gradient(0deg,#090c0a,transparent 40%)}.menu-top .wordmark{font-size:.75rem}.menu-footer{font-size:.58rem;min-height:65px;gap:10px}.game-screen{padding:0 17px}.game-header{height:66px;gap:8px}.game-header .wordmark{font-size:.7rem;letter-spacing:.05em}.brand-symbol{font-size:21px;margin-right:8px}.game-header nav{gap:12px}.game-header nav button{font-size:.65rem}.game-header nav button:last-child span{display:none}.game-status{min-height:94px;gap:10px;align-items:flex-start;justify-content:center;flex-direction:column;padding:15px 0}.resources{gap:22px;flex-wrap:wrap;row-gap:7px}.resources span{font-size:.68rem}.resources b{margin-left:8px;font-size:.85rem}.day-label strong{font-size:1.3rem}.phase-label{font-size:.6rem;padding:3px 8px}.game-layout{grid-template-columns:1fr;gap:18px}.game-main .scene{height:295px;min-height:295px}.scene-coordinate{display:none}.dialogue{padding:20px}.dialogue-text{font-size:.92rem;min-height:115px}.game-sidebar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);gap:12px;align-items:start}.npc-panel{grid-row:span 2}.panel-caption{padding:0 13px;font-size:.6rem}.npc-identity{padding:16px 12px 12px;gap:9px}.npc-avatar{width:30px;height:39px;font-size:14px}.npc-identity h2{font-size:.88rem}.npc-identity .tag{display:none}.npc-description{padding:0 12px 12px;font-size:.65rem}.npc-tabs{margin:0 12px;gap:9px}.npc-tabs button{padding:10px 7px;font-size:.7rem}.npc-actions{padding:8px 4px;min-height:85px}.npc-decision{padding:8px 4px}.choice-button{gap:8px;padding:10px 8px;font-size:.76rem}.choice-copy small{font-size:.6rem}.choice-arrow{font-size:12px}.record-panel h2{margin:16px 12px 12px;font-size:.75rem}.record-panel ul{padding:0 12px 13px}.record-panel li{font-size:.7rem}.empty-note{margin:0 12px 14px;font-size:.65rem}.inventory-label{margin:0 12px;font-size:.6rem}.record-panel>.compact{padding:0 12px 13px;font-size:.65rem}.debug-panel{font-size:.65rem;padding:12px}.debug-panel button{font-size:.65rem;padding:6px}.debug-panel dl{display:block}.debug-panel dd{margin-bottom:8px;font-size:.6rem}.game-footer{font-size:.57rem;gap:10px;min-height:60px;margin-top:20px}.game-footer>span:nth-child(2){display:none}.game-footer>span:last-child{display:block}.modal-head{padding:20px}.save-screen,.settings-screen,.credits,.confirm-panel{padding:20px}.slot-actions{max-width:75px}.save-slot{gap:10px;padding:13px 10px}.slot-index{min-width:25px;padding-right:8px;font-size:.65rem}.slot-info p{font-size:.6rem}.slot-info time{font-size:.56rem}.setting-row{gap:14px}.setting-row small{font-size:.65rem}.setting-row select{min-width:90px;padding:8px;font-size:.7rem}.scene-label{font-size:.62rem;left:20px}.subject-marker{right:20px}.scene-character .silhouette{width:40%;left:33%;height:80%}}
 @media(max-width:370px){.game-header nav{gap:8px}.wordmark-button .brand-symbol{display:none}.game-sidebar{grid-template-columns:1fr}.npc-panel{grid-row:auto}.build-label{font-size:.6rem}.main-menu{padding-inline:20px}.menu-content h1{font-size:58px}}
-/* In-scene conversation: character left, speech and choices in the environment. */
-.immersive-game .game-layout{display:block}.immersive-game .game-main{border:0}.immersive-game .game-main .scene{height:auto;min-height:660px;border:0;display:grid;grid-template-columns:45% 55%;align-items:center;padding:65px 6% 80px}.immersive-game .scene-background{background:radial-gradient(ellipse at 22% 40%,#324c3733,transparent 65%),linear-gradient(120deg,#121c15,#080e0b)}.immersive-game .scene .door-frame{left:10%;width:28%;height:85%;bottom:3%}.immersive-game .scene .silhouette{left:4%;width:39%;height:83%;bottom:0}.immersive-game .scene-character{justify-content:flex-start}.immersive-game .scene-character img{width:44%;height:90%;object-fit:contain}.immersive-game .dialogue{grid-column:2;background:none;padding:20px 0;z-index:1;text-shadow:0 2px 12px #000,0 0 24px #000}.immersive-game .dialogue h1{color:#c5dacc}.immersive-game .dialogue-text{color:#d0e2d4;min-height:110px;line-height:2.1}.immersive-game .dialogue-meta{display:none}.immersive-game .npc-panel{border:0;background:none;margin-top:25px}.immersive-game .npc-panel .panel-caption,.immersive-game .npc-identity,.immersive-game .npc-description{display:none}.immersive-game .npc-tabs{margin:0;gap:24px;border:0}.immersive-game .npc-tabs button{padding:8px 0;color:#9db2a3}.immersive-game .npc-tabs button[aria-selected=true]{color:#d7eddd}.immersive-game .npc-actions{padding:16px 0 4px;min-height:0}.immersive-game .npc-decision{padding:0;min-height:0;border:0;background:none}.immersive-game .choice-button,.immersive-game .story-choices .choice-button{background:none;border:0;border-left:2px solid transparent;border-radius:0;padding:12px 16px;color:#c6ddcc;min-height:48px}.immersive-game .choice-button:hover:not(:disabled),.immersive-game .choice-button:focus-visible{background:linear-gradient(90deg,#9ec8ad24,transparent);border-left-color:#b9dac3;color:#edfff1}.immersive-game .choice-button:disabled{color:#7b8a7e}.immersive-game .choice-arrow{opacity:0}.immersive-game .choice-button:hover .choice-arrow{opacity:1}.immersive-game .choice-number{color:#97b39e}.immersive-game .subject-marker{left:28px;right:auto}.immersive-game .scene-coordinate,.immersive-game .crosshair{display:none}.immersive-game .game-sidebar{display:flex;flex-direction:row;align-items:start;gap:20px;margin-top:16px}.immersive-game .record-panel,.immersive-game .debug-panel{flex:1;background:none;border:0;padding:12px 0}.immersive-game .record-panel>summary{font-size:.75rem;color:#9aae9c;cursor:pointer;padding-bottom:12px}.immersive-game .record-panel .panel-caption{display:none}.immersive-game .game-footer{margin-top:12px}
-@media(max-width:760px){.immersive-game .game-main .scene{grid-template-columns:28% 72%;min-height:690px;padding:85px 20px 65px 12px;align-items:center}.immersive-game .scene .silhouette{left:-14%;width:63%;height:73%;opacity:.6}.immersive-game .scene-character img{width:55%;opacity:.65}.immersive-game .scene .door-frame{left:0;width:48%}.immersive-game .dialogue{padding:10px 0 10px 12px}.immersive-game .dialogue-text{font-size:.92rem;min-height:130px}.immersive-game .npc-tabs{gap:20px}.immersive-game .npc-actions{padding-top:10px}.immersive-game .choice-button{font-size:.82rem;padding:12px 8px;gap:9px}.immersive-game .choice-copy small{font-size:.66rem}.immersive-game .game-sidebar{flex-direction:column;gap:0}.immersive-game .record-panel,.immersive-game .debug-panel{width:100%}.immersive-game .scene-label{bottom:20px;font-size:.6rem}.immersive-game .subject-marker{top:22px;left:20px}.immersive-game .ending-actions{gap:10px}.immersive-game .ending-actions button{padding:10px 14px}}
+/* Conversation follows the scene in normal flow, keeping long text readable. */
+.dialogue-game .game-layout { display: block; }
+.dialogue-game .game-main { border: 0; background: #101710; }
+.dialogue-game .game-main .scene {
+  height: clamp(300px, 42svh, 500px);
+  min-height: 0;
+  border: 0;
+}
+.dialogue-game .scene-background {
+  background: radial-gradient(ellipse at 50% 40%, #324c3733, transparent 65%), linear-gradient(120deg, #121c15, #080e0b);
+}
+.dialogue-game .scene-coordinate, .dialogue-game .crosshair { display: none; }
+.dialogue-game .dialogue {
+  padding: 28px max(28px, calc((100% - 860px) / 2)) 32px;
+  background: linear-gradient(#101710, #0c110d);
+}
+.dialogue-game .dialogue-meta { display: none; }
+.dialogue-game .dialogue h1 { color: #c5dacc; }
+.dialogue-game .dialogue-text { color: #d0e2d4; min-height: 5em; line-height: 2; }
+.dialogue-game .npc-panel { border: 0; background: none; margin-top: 20px; }
+.dialogue-game .npc-panel .panel-caption,
+.dialogue-game .npc-identity, .dialogue-game .npc-description { display: none; }
+.dialogue-game .npc-tabs { margin: 0; gap: 28px; border: 0; }
+.dialogue-game .npc-tabs button { padding: 10px 0; color: #9db2a3; min-height: 44px; }
+.dialogue-game .npc-tabs button[aria-selected=true] { color: #d7eddd; }
+.dialogue-game .npc-actions { padding: 12px 0 4px; min-height: 0; }
+.dialogue-game .npc-decision { padding: 0; min-height: 0; border: 0; background: none; }
+.dialogue-game .choice-button, .dialogue-game .story-choices .choice-button {
+  background: none; border: 0; border-left: 2px solid transparent;
+  border-radius: 0; padding: 12px 16px; color: #c6ddcc; min-height: 48px;
+}
+.dialogue-game .choice-button:hover:not(:disabled), .dialogue-game .choice-button:focus-visible {
+  background: linear-gradient(90deg, #9ec8ad24, transparent);
+  border-left-color: #b9dac3; color: #edfff1;
+}
+.dialogue-game .choice-button:disabled { color: #7b8a7e; }
+.dialogue-game .choice-number { color: #97b39e; }
+.dialogue-game .choice-arrow { opacity: 0; }
+.dialogue-game .choice-button:hover .choice-arrow, .dialogue-game .choice-button:focus-visible .choice-arrow { opacity: 1; }
+.dialogue-game .game-sidebar { display: flex; flex-direction: row; align-items: start; gap: 20px; margin-top: 16px; }
+.dialogue-game .record-panel, .dialogue-game .debug-panel { flex: 1; background: none; border: 0; padding: 12px 0; }
+.dialogue-game .record-panel > summary { font-size: .75rem; color: #9aae9c; cursor: pointer; padding-bottom: 12px; }
+.dialogue-game .record-panel .panel-caption { display: none; }
+.dialogue-game .game-footer { margin-top: 12px; }
+@media (max-width: 760px) {
+  .dialogue-game .game-main .scene { height: clamp(200px, 31svh, 310px); min-height: 0; }
+  .dialogue-game .dialogue { padding: 22px 18px 26px; }
+  .dialogue-game .dialogue-text { font-size: 1rem; min-height: 0; overflow-wrap: anywhere; }
+  .dialogue-game.text-large .dialogue-text { font-size: 1.22rem; }
+  .dialogue-game .npc-tabs { gap: 30px; }
+  .dialogue-game .npc-tabs button { font-size: .85rem; }
+  .dialogue-game .choice-button { font-size: .95rem; padding: 12px 8px; gap: 10px; }
+  .dialogue-game.text-large .choice-button { font-size: 1.1rem; }
+  .dialogue-game .choice-copy small { font-size: .75rem; }
+  .dialogue-game .game-sidebar { flex-direction: column; gap: 0; }
+  .dialogue-game .record-panel, .dialogue-game .debug-panel { width: 100%; }
+  .dialogue-game .scene-label { bottom: 16px; font-size: .6rem; }
+  .dialogue-game .subject-marker { top: 22px; right: 20px; }
+  .dialogue-game .ending-actions { gap: 10px; }
+  .dialogue-game .ending-actions button { padding: 12px 16px; min-height: 44px; }
+}
+.dialogue-game .npc-decision { flex-wrap: wrap; }
+.dialogue-game .npc-decision .choice-button { flex: 1 1 220px; }
+.resources small { margin-left: 10px; color: #93a58c; font-size: .65rem; }
+.observation { margin: 22px 0; padding-left: 18px; border-left: 1px solid #64785a; }
+.observation h2 { font-size: .9rem; font-weight: 400; color: #cfddbf; margin-bottom: 10px; }
+.observation p { color: #aabb9e; line-height: 2; white-space: pre-wrap; overflow-wrap: anywhere; }
+.text-large .observation p { font-size: 1.22rem; }

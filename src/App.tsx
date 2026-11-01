@@ -35,7 +35,7 @@ export default function App() {
     {panel && <Modal title={{ saves: '存檔與讀檔', settings: '設定', credits: '製作資訊', new: '開始新的測試？' }[panel]} onClose={() => setPanel(null)}>
       {panel === 'saves' && <SaveScreen onLoaded={() => { setScreen('game'); setPanel(null); }} />}
       {panel === 'settings' && <SettingsScreen settings={settings} onChange={updateSettings} error={settingsError} />}
-      {panel === 'credits' && <div className="credits"><span className="eyebrow">未命名計畫 / 0.1.0</span><h3>文字互動遊戲框架</h3><p>第一階段：UI 與核心系統測試。</p><p>使用 React、TypeScript 與 Vite 建立。所有內容均為中立佔位資料，尚無正式角色、劇情或世界觀。</p><p>介面中的場景、角色剪影與特效以 CSS 繪製，未使用第三方遊戲素材。無音樂與音效。</p></div>}
+      {panel === 'credits' && <div className="credits"><span className="eyebrow">未命名計畫 / 0.1.0</span><h3>文字互動遊戲框架</h3><p>第一位角色：夜晚接待與白天互動測試。</p><p>使用 React、TypeScript 與 Vite 建立。所有內容均為中立佔位資料，尚無正式角色、劇情或世界觀。</p><p>介面中的場景、角色剪影與特效以 CSS 繪製，未使用第三方遊戲素材。無音樂與音效。</p></div>}
       {panel === 'new' && <div className="confirm-panel"><p>目前進度與自動存檔將由新的測試取代。三個手動存檔會保留。</p><p className="muted">需要保留目前進度時，請先取消並手動存檔。</p><div className="ending-actions"><button className="primary-button" onClick={begin}>開始新遊戲</button><button className="secondary-button" onClick={() => setPanel(null)}>取消</button></div></div>}
     </Modal>}
   </div>;

@@ -1,6 +1,7 @@
+import { checkCondition } from '../engine/conditions';
 import type { GameState, StoryData } from '../types/game';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 export const slots = ['auto', '1', '2', '3'] as const;
 export type Slot = typeof slots[number];
 export interface SaveData { version: number; savedAt: string; state: GameState }
@@ -15,22 +16,26 @@ export function validState(x: unknown, data: StoryData): x is GameState {
   return typeof x.currentNodeId === 'string' && data.nodes.some(n => n.id === x.currentNodeId)
     && typeof x.currentPhase === 'string' && data.config.phases.some(p => p.id === x.currentPhase)
     && typeof x.day === 'number' && Number.isInteger(x.day) && x.day > 0
-    && numbers(x.playerStats) && numbers(x.resources) && object(x.resources) && Object.values(x.resources).every(v => typeof v === 'number' && v >= 0)
-    && strings(x.inventory) && strings(x.clues) && strings(x.flags)
+    && numbers(x.resources) && object(x.resources) && Object.values(x.resources).every(v => typeof v === 'number' && v >= 0)
+    && typeof x.resources.actions === 'number' && Number.isInteger(x.resources.actions)
+    && strings(x.flags)
+    && (x.lastObservation === null || (object(x.lastObservation) && typeof x.lastObservation.npcId === 'string' && typeof x.lastObservation.featureId === 'string' && data.npcs.some(n => n.id === (x.lastObservation as Record<string, unknown>).npcId && n.features.some(f => f.id === (x.lastObservation as Record<string, unknown>).featureId))))
     && strings(x.visitedNodes) && x.visitedNodes.every(id => data.nodes.some(n => n.id === id))
     && (x.endingId === null || (typeof x.endingId === 'string' && x.endingId === x.currentNodeId && data.nodes.some(n => n.id === x.endingId && n.type === 'ending')))
     && (data.nodes.find(n => n.id === x.currentNodeId)?.type === 'ending' ? x.endingId === x.currentNodeId : x.endingId === null)
     && object(x.npcStates) && Object.values(x.npcStates).every(s => object(s) && Object.values(s).every(v => ['boolean', 'number', 'string'].includes(typeof v) && (typeof v !== 'number' || Number.isFinite(v))))
-    && Array.isArray(x.decisionHistory) && x.decisionHistory.every(h => object(h) && typeof h.nodeId === 'string' && data.nodes.some(n => n.id === h.nodeId) && typeof h.choiceId === 'string' && typeof h.day === 'number' && Number.isInteger(h.day) && h.day > 0);
+    && Object.keys(x.npcStates).every(id => data.npcs.some(n => n.id === id))
+    && Array.isArray(x.decisionHistory) && x.decisionHistory.every(h => object(h) && typeof h.nodeId === 'string' && data.nodes.some(n => n.id === h.nodeId) && typeof h.choiceId === 'string' && typeof h.day === 'number' && Number.isInteger(h.day) && h.day > 0)
+    && checkCondition(data.nodes.find(n => n.id === x.currentNodeId)?.conditions, x as unknown as GameState)
+    && (x.endingId !== null || !data.config.transitions.some(t => checkCondition(t.conditions, x as unknown as GameState)));
 }
 export function decodeSave(raw: string, data: StoryData): SaveResult<SaveData> {
   try {
     const value: unknown = JSON.parse(raw);
     if (!object(value)) return { ok: false, error: '存檔格式不正確。' };
-    // Version 0 used `timestamp`; migrate only this known format, never guess future versions.
-    const version = value.version === 0 ? 1 : value.version;
-    const savedAt = value.version === 0 ? value.timestamp : value.savedAt;
-    if (version !== SAVE_VERSION) return { ok: false, error: '此存檔版本尚不相容，請保留原存檔。' };
+    const version = value.version;
+    const savedAt = value.savedAt;
+    if (version !== SAVE_VERSION) return { ok: false, error: '存檔版本與目前日夜規則不相容，請開始新遊戲。舊手動存檔會保留。' };
     if (typeof savedAt !== 'string' || !Number.isFinite(Date.parse(savedAt)) || !validState(value.state, data)) return { ok: false, error: '存檔資料已損壞或與目前測試資料不相容。' };
     return { ok: true, value: { version: SAVE_VERSION, savedAt, state: value.state } };
   } catch { return { ok: false, error: '無法解析存檔，原始資料已保留。' }; }

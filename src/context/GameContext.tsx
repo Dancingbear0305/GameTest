@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useReducer, useState, type ReactNode } from 'react';
 import { story } from '../data';
-import { applyEffects, choose, createGame, validateStory } from '../engine/story';
+import { choose, createGame, validateStory } from '../engine/story';
 import { writeSave } from '../systems/save';
 import type { GameState } from '../types/game';
 
-type Action = { type: 'new' } | { type: 'load'; state: GameState } | { type: 'choose'; id: string } | { type: 'nextDay' | 'phase' };
+type Action = { type: 'new' } | { type: 'load'; state: GameState } | { type: 'choose'; id: string };
 interface Session { game: GameState | null; error: string | null }
 const dataErrors = validateStory(story);
 function reducer(session: Session, action: Action): Session {
@@ -13,9 +13,7 @@ function reducer(session: Session, action: Action): Session {
     if (action.type === 'new') return { game: createGame(story), error: null };
     if (action.type === 'load') return { game: action.state, error: null };
     if (!session.game) return session;
-    if (action.type === 'choose') return { game: choose(session.game, action.id, story), error: null };
-    const effects = action.type === 'nextDay' ? [{ type: 'newDay' as const }] : [{ type: 'phase' as const, phase: story.config.phases[(story.config.phases.findIndex(p => p.id === session.game?.currentPhase) + 1) % story.config.phases.length].id }];
-    return { game: applyEffects(session.game, effects, story), error: null };
+    return { game: choose(session.game, action.id, story), error: null };
   } catch (error) { return { ...session, error: error instanceof Error ? error.message : '發生未知錯誤。' }; }
 }
 interface ContextValue extends Session { dispatch: React.Dispatch<Action>; saveError: string | null; lastSaved: string | null }

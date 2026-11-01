@@ -1,37 +1,540 @@
 {
   "config": {
-    "initialNodeId": "start", "initialPhase": "inspection",
-    "phases": [{"id":"inspection","label":"調查階段"},{"id":"review","label":"判斷階段","eventId":"phase-event"}],
-    "dailyResources": {"actions":3}, "initialStats":{"focus":100}, "initialResources":{"actions":3,"tools":1},
-    "statLabels":{"focus":"專注度"}, "resourceLabels":{"actions":"行動次數","tools":"工具"},
-    "clueLabels":{"test-clue":"測試線索"}, "itemLabels":{"test-file":"測試文件"}
-  },
-  "npcs": [{
-    "id":"test-npc","name":"測試 NPC","designation":"NPC－001", "description":"中立測試對象。外觀與身分尚未設定。",
-    "questions":[{"id":"ask","label":"詢問測試問題","next":"answer"}],
-    "investigations":[
-      {"id":"inspect","label":"檢查測試項目","next":"investigation","enabledWhen":{"op":"and","conditions":[{"op":"gte","group":"resources","key":"actions","value":1},{"op":"not","condition":{"op":"flag","key":"inspected"}}]},"lockedReason":"需要 1 次行動，且僅能調查一次","effects":[{"type":"add","group":"resources","key":"actions","value":-1}]},
-      {"id":"record","label":"查詢測試紀錄","next":"record","enabledWhen":{"op":"flag","key":"inspected"},"lockedReason":"請先檢查測試項目"}
+    "initialNodeId": "night-door",
+    "initialPhase": "night",
+    "phases": [
+      {
+        "id": "night",
+        "label": "夜晚"
+      },
+      {
+        "id": "day",
+        "label": "白天",
+        "eventId": "day-start"
+      }
     ],
-    "interactions":[{"id":"tool","label":"使用測試工具","next":"tool-result","enabledWhen":{"op":"gte","group":"resources","key":"tools","value":1},"lockedReason":"工具已耗盡","effects":[{"type":"add","group":"resources","key":"tools","value":-1},{"type":"item","key":"test-file"}]}],
-    "decision":{"id":"judge","label":"進行最終判斷","next":"decision"}
-  }],
+    "dailyResources": {
+      "actions": 0
+    },
+    "initialResources": {
+      "actions": 0
+    },
+    "resourceLabels": {
+      "actions": "行動次數"
+    },
+    "transitions": [
+      {
+        "conditions": {
+          "op": "and",
+          "conditions": [
+            {
+              "op": "phase",
+              "value": "day"
+            },
+            {
+              "op": "lte",
+              "group": "resources",
+              "key": "actions",
+              "value": 0
+            }
+          ]
+        },
+        "next": "first-day-end"
+      }
+    ]
+  },
+  "npcs": [
+    {
+      "id": "first",
+      "name": "測試角色",
+      "designation": "角色 01",
+      "description": "第一位固定特徵的佔位角色，正式設定與台詞由你填寫。",
+      "features": [
+        {
+          "id": "head",
+          "label": "頭部",
+          "text": "頭部的固定測試特徵 A。此處由你填入正式描述。"
+        },
+        {
+          "id": "eyes",
+          "label": "眼睛",
+          "text": "眼睛的固定測試特徵 B。此處由你填入正式描述。"
+        },
+        {
+          "id": "hands",
+          "label": "手部",
+          "text": "手部的固定測試特徵 C。此處由你填入正式描述。"
+        }
+      ]
+    }
+  ],
   "nodes": [
-    {"id":"start","type":"narration","speaker":"系統","npcId":"test-npc","text":"測試流程已啟動。\n\n選擇一項操作，開始與測試 NPC 互動。你可以提問、調查測試項目，或直接進行判斷。","tags":["介面測試","中立佔位"]},
-    {"id":"answer","type":"dialogue","speaker":"測試 NPC","npcId":"test-npc","text":"這是一段測試回應。所有對話皆由外部 JSON 資料提供。","choices":[{"id":"follow-up","label":"繼續提問","next":"follow-up"},{"id":"back","label":"結束對話","next":"start"}]},
-    {"id":"follow-up","type":"dialogue","speaker":"測試 NPC","npcId":"test-npc","text":"這是下一句測試對話。正式內容尚未設定。","next":"start"},
-    {"id":"investigation","type":"investigation","speaker":"調查結果","npcId":"test-npc","text":"測試項目檢查完成。\n\n已取得「測試線索」，並設定調查旗標。新的紀錄與判斷選項已解鎖。","effects":[{"type":"flag","key":"inspected","value":true},{"type":"clue","key":"test-clue"}],"next":"start"},
-    {"id":"record","type":"narration","speaker":"測試紀錄","npcId":"test-npc","conditions":{"op":"flag","key":"inspected"},"text":"測試紀錄：調查旗標存在，條件判斷通過。\n\n你可以在最終判斷中使用已取得的線索。","next":"start"},
-    {"id":"tool-result","type":"narration","speaker":"工具結果","npcId":"test-npc","text":"已消耗 1 個工具，取得「測試文件」。\n\n此操作用來驗證資源消耗與物品系統。","next":"start"},
-    {"id":"decision","type":"decision","speaker":"最終判斷","npcId":"test-npc","text":"請選擇測試判斷。\n\n你的選擇會記錄至遊戲狀態，並導向不同測試結局。","choices":[
-      {"id":"accept","label":"判定通過","next":"ending-a"},
-      {"id":"evidence","label":"根據線索判定","next":"ending-b","conditions":{"op":"flag","key":"inspected"}},
-      {"id":"reject","label":"判定不通過","next":"ending-c"},
-      {"id":"back","label":"返回調查","next":"start"}
-    ]},
-    {"id":"ending-a","type":"ending","speaker":"測試結局 A","text":"已記錄：判定通過。\n\n分支跳轉測試完成。你可以讀取存檔，或重新開始測試。","tags":["流程完成"]},
-    {"id":"ending-b","type":"ending","speaker":"測試結局 B","text":"已記錄：根據線索判定。\n\n調查、旗標解鎖與分支跳轉測試完成。","tags":["線索分支完成"]},
-    {"id":"ending-c","type":"ending","speaker":"測試結局 C","text":"已記錄：判定不通過。\n\n另一個測試分支已完成。","tags":["流程完成"]},
-    {"id":"phase-event","type":"event","text":"測試階段事件","effects":[{"type":"flag","key":"phase-tested","value":true}],"next":"start"}
+    {
+      "id": "night-door",
+      "type": "choice",
+      "speaker": "門外",
+      "npcId": "first",
+      "text": "第一天的夜晚。測試角色正在門外。\n\n你可以與對方交談，再決定放進來或趕走。",
+      "conditions": {
+        "op": "phase",
+        "value": "night"
+      },
+      "choices": [
+        {
+          "id": "night-talk",
+          "label": "與測試角色對話",
+          "next": "night-answer",
+          "category": "dialogue"
+        },
+        {
+          "id": "admit",
+          "label": "放進來",
+          "next": "admit-day",
+          "category": "decision"
+        },
+        {
+          "id": "reject",
+          "label": "趕走",
+          "next": "reject-day",
+          "category": "decision"
+        }
+      ]
+    },
+    {
+      "id": "night-answer",
+      "type": "dialogue",
+      "speaker": "測試角色",
+      "npcId": "first",
+      "text": "［夜晚對話佔位，等待你填寫。］",
+      "conditions": {
+        "op": "phase",
+        "value": "night"
+      },
+      "next": "night-door"
+    },
+    {
+      "id": "admit-day",
+      "type": "event",
+      "text": "",
+      "effects": [
+        {
+          "type": "npc",
+          "npcId": "first",
+          "key": "presence",
+          "value": "inside"
+        },
+        {
+          "type": "flag",
+          "key": "admitted",
+          "value": true
+        },
+        {
+          "type": "phase",
+          "phase": "day"
+        }
+      ],
+      "next": "day-room"
+    },
+    {
+      "id": "reject-day",
+      "type": "event",
+      "text": "",
+      "effects": [
+        {
+          "type": "npc",
+          "npcId": "first",
+          "key": "presence",
+          "value": "gone"
+        },
+        {
+          "type": "flag",
+          "key": "rejected",
+          "value": true
+        },
+        {
+          "type": "phase",
+          "phase": "day"
+        }
+      ],
+      "next": "day-empty"
+    },
+    {
+      "id": "day-start",
+      "type": "event",
+      "text": "",
+      "effects": [
+        {
+          "type": "set",
+          "group": "resources",
+          "key": "actions",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "id": "day-room",
+      "type": "choice",
+      "speaker": "屋內",
+      "text": "白天。選擇屋內的角色進行對話或互動。\n\n對話不消耗行動；每調查一個部位消耗 1 次行動。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "npc",
+            "npcId": "first",
+            "key": "presence",
+            "value": "inside"
+          }
+        ]
+      },
+      "choices": [
+        {
+          "id": "select-first",
+          "label": "選擇測試角色",
+          "next": "day-person",
+          "conditions": {
+            "op": "npc",
+            "npcId": "first",
+            "key": "presence",
+            "value": "inside"
+          }
+        }
+      ]
+    },
+    {
+      "id": "day-empty",
+      "type": "choice",
+      "speaker": "屋內",
+      "text": "屋內沒有可互動的角色。\n\n你可以結束白天，完成這次測試。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "not",
+            "condition": {
+              "op": "npc",
+              "npcId": "first",
+              "key": "presence",
+              "value": "inside"
+            }
+          }
+        ]
+      },
+      "choices": [
+        {
+          "id": "finish-day",
+          "label": "結束白天",
+          "next": "first-day-end"
+        }
+      ]
+    },
+    {
+      "id": "day-person",
+      "type": "choice",
+      "speaker": "測試角色",
+      "npcId": "first",
+      "text": "選擇對話或互動。\n\n角色的部位特徵已固定，不會隨機改變。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "npc",
+            "npcId": "first",
+            "key": "presence",
+            "value": "inside"
+          }
+        ]
+      },
+      "choices": [
+        {
+          "id": "day-talk",
+          "label": "與測試角色對話",
+          "next": "day-answer",
+          "category": "dialogue"
+        },
+        {
+          "id": "inspect-head",
+          "label": "調查頭部（1 次行動）",
+          "next": "inspect-result",
+          "category": "interaction",
+          "enabledWhen": {
+            "op": "and",
+            "conditions": [
+              {
+                "op": "gte",
+                "group": "resources",
+                "key": "actions",
+                "value": 1
+              },
+              {
+                "op": "not",
+                "condition": {
+                  "op": "flag",
+                  "key": "inspected-head"
+                }
+              }
+            ]
+          },
+          "lockedReason": "已調查此部位，或行動次數不足",
+          "effects": [
+            {
+              "type": "add",
+              "group": "resources",
+              "key": "actions",
+              "value": -1
+            },
+            {
+              "type": "observe",
+              "npcId": "first",
+              "featureId": "head"
+            },
+            {
+              "type": "flag",
+              "key": "inspected-head",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "inspect-eyes",
+          "label": "調查眼睛（1 次行動）",
+          "next": "inspect-result",
+          "category": "interaction",
+          "enabledWhen": {
+            "op": "and",
+            "conditions": [
+              {
+                "op": "gte",
+                "group": "resources",
+                "key": "actions",
+                "value": 1
+              },
+              {
+                "op": "not",
+                "condition": {
+                  "op": "flag",
+                  "key": "inspected-eyes"
+                }
+              }
+            ]
+          },
+          "lockedReason": "已調查此部位，或行動次數不足",
+          "effects": [
+            {
+              "type": "add",
+              "group": "resources",
+              "key": "actions",
+              "value": -1
+            },
+            {
+              "type": "observe",
+              "npcId": "first",
+              "featureId": "eyes"
+            },
+            {
+              "type": "flag",
+              "key": "inspected-eyes",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "inspect-hands",
+          "label": "調查手部（1 次行動）",
+          "next": "inspect-result",
+          "category": "interaction",
+          "enabledWhen": {
+            "op": "and",
+            "conditions": [
+              {
+                "op": "gte",
+                "group": "resources",
+                "key": "actions",
+                "value": 1
+              },
+              {
+                "op": "not",
+                "condition": {
+                  "op": "flag",
+                  "key": "inspected-hands"
+                }
+              }
+            ]
+          },
+          "lockedReason": "已調查此部位，或行動次數不足",
+          "effects": [
+            {
+              "type": "add",
+              "group": "resources",
+              "key": "actions",
+              "value": -1
+            },
+            {
+              "type": "observe",
+              "npcId": "first",
+              "featureId": "hands"
+            },
+            {
+              "type": "flag",
+              "key": "inspected-hands",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "shoot",
+          "label": "對測試角色開槍",
+          "next": "shoot-confirm",
+          "category": "interaction"
+        },
+        {
+          "id": "back-room",
+          "label": "返回屋內",
+          "next": "day-room",
+          "category": "decision"
+        }
+      ]
+    },
+    {
+      "id": "day-answer",
+      "type": "dialogue",
+      "speaker": "測試角色",
+      "npcId": "first",
+      "text": "［白天對話佔位，等待你填寫。］\n\n對話不消耗行動次數。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "npc",
+            "npcId": "first",
+            "key": "presence",
+            "value": "inside"
+          }
+        ]
+      },
+      "next": "day-person"
+    },
+    {
+      "id": "inspect-result",
+      "type": "investigation",
+      "speaker": "調查結果",
+      "npcId": "first",
+      "text": "已消耗 1 次行動。以下是該部位的固定特徵。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "npc",
+            "npcId": "first",
+            "key": "presence",
+            "value": "inside"
+          }
+        ]
+      },
+      "next": "day-person"
+    },
+    {
+      "id": "shoot-confirm",
+      "type": "decision",
+      "speaker": "確認開槍",
+      "npcId": "first",
+      "text": "確定對此角色開槍？\n\n確認後，角色將從屋內消失，不會揭露其真實身分。此操作不消耗行動次數。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "npc",
+            "npcId": "first",
+            "key": "presence",
+            "value": "inside"
+          }
+        ]
+      },
+      "choices": [
+        {
+          "id": "confirm-shoot",
+          "label": "確認開槍",
+          "next": "shot-result",
+          "effects": [
+            {
+              "type": "npc",
+              "npcId": "first",
+              "key": "presence",
+              "value": "gone"
+            },
+            {
+              "type": "flag",
+              "key": "shot",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": "cancel-shoot",
+          "label": "取消，返回互動",
+          "next": "day-person"
+        }
+      ]
+    },
+    {
+      "id": "shot-result",
+      "type": "narration",
+      "speaker": "系統",
+      "text": "角色已從屋內消失。\n\n身分未揭露。",
+      "conditions": {
+        "op": "and",
+        "conditions": [
+          {
+            "op": "phase",
+            "value": "day"
+          },
+          {
+            "op": "not",
+            "condition": {
+              "op": "npc",
+              "npcId": "first",
+              "key": "presence",
+              "value": "inside"
+            }
+          }
+        ]
+      },
+      "next": "day-empty"
+    },
+    {
+      "id": "first-day-end",
+      "type": "ending",
+      "speaker": "白天結束",
+      "text": "白天階段已結束，現在進入下一個夜晚。\n\n本階段測試到此為止，尚未加入第二次夜晚的來訪角色。",
+      "effects": [
+        {
+          "type": "newDay"
+        }
+      ]
+    }
   ]
 }
